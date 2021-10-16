@@ -18,32 +18,36 @@ namespace TestTask2
             sb = new StringBuilder(streamreader.ReadToEnd().ToString());
         }
 
-        public IEnumerable<WordCounter> MakingWordList()
+        public IOrderedEnumerable<KeyValuePair<string, int>> MakingWordList()
         {
             Console.WriteLine("Making the word frequency list");
             var wordsArray = sb.ToString().
                 Split(' ', ',', '.', '-', '!', '?', ':', ';', '"', '[', ']', '(', ')', '\r', '\t', '\n');
 
-            List<WordCounter> words = new List<WordCounter>();
+            Dictionary<string, int> dictionaryWords = new Dictionary<string, int>();
 
             foreach (var item in wordsArray)
             {
-                WordCounter foundword = words.Find(x => x.word == item);
-                if (foundword == null)
+                if (dictionaryWords.ContainsKey(item))
                 {
-                    words.Add(new WordCounter(item, 1));
+                    dictionaryWords[item]++;
                 }
                 else
                 {
-                    foundword.amount++;
+                    dictionaryWords.Add(item, 1);
                 }
+
             }
 
-            IEnumerable<WordCounter> sortedWords = words.OrderByDescending(w => w.amount);
+
+            IOrderedEnumerable<KeyValuePair<string, int>> sortedWords = dictionaryWords.OrderByDescending(w => w.Value);
+
+
             Console.WriteLine("Completed");
             return sortedWords;
         }
-        public void AmountListFileInput(IEnumerable<WordCounter> words)
+        
+        public void AmountListFileInput(IOrderedEnumerable<KeyValuePair<string, int>> words)
         {
             try
             {
@@ -51,8 +55,9 @@ namespace TestTask2
                 Console.WriteLine("Trying to write data to a file");
                 using (StreamWriter streamwriter = new StreamWriter(@"..\..\InputFile.txt", false))
                 {
-                    foreach (var w in words)
-                        streamwriter.WriteLine("{0} \t {1}", w.word, w.amount);
+                    foreach(var w in words)
+                        streamwriter.WriteLine("{0} \t {1}", w.Key, w.Value);
+
                 }
             }
             catch(Exception e)
