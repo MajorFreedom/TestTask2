@@ -16,6 +16,7 @@ namespace TestTask2
         {
             StreamReader streamreader = new StreamReader(Path.GetFullPath(filename));
             sb = new StringBuilder(streamreader.ReadToEnd().ToString());
+            streamreader.Close();
         }
 
         public IOrderedEnumerable<KeyValuePair<string, int>> MakingWordList()
@@ -49,6 +50,7 @@ namespace TestTask2
         
         public void AmountListFileInput(IOrderedEnumerable<KeyValuePair<string, int>> words)
         {
+            bool isWritten = true;
             try
             {
                 string writePath = Environment.CurrentDirectory;
@@ -57,15 +59,17 @@ namespace TestTask2
                 {
                     foreach(var w in words)
                         streamwriter.WriteLine("{0} \t {1}", w.Key, w.Value);
-
+                    streamwriter.Close();
                 }
             }
             catch(Exception e)
             {
                 Console.WriteLine("Error!");
-                Console.WriteLine("Message: {0}", e.Message);  
+                Console.WriteLine("Message: {0}", e.Message);
+                isWritten = false;
             }
-            finally
+          
+            if(isWritten)
             {
                 Console.WriteLine("Data was written successfully");
             }
