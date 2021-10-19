@@ -8,7 +8,7 @@ namespace TestTask2
         static void Main(string[] args)
         {
             TextAnalyzer text = new TextAnalyzer();
-            text.AmountListFileInput(text.MakingWordList());
+            text.AmountListFileInput(text.ListReflectionOutput());
 
             Console.WriteLine("Press key to exit");
             Console.ReadLine();

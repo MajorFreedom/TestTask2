@@ -3,52 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Reflection;
+using AnalyzerLibrary;
+
 
 namespace TestTask2
 {
+
     class TextAnalyzer
     {
 
         private static readonly string filename = "largetext.txt";
         private StringBuilder sb;
 
-        public TextAnalyzer() 
+        public TextAnalyzer()
         {
             StreamReader streamreader = new StreamReader(Path.GetFullPath(filename));
             sb = new StringBuilder(streamreader.ReadToEnd().ToString());
             streamreader.Close();
         }
 
-        public IOrderedEnumerable<KeyValuePair<string, int>> MakingWordList()
+
+        public Dictionary<string, int> ListReflectionOutput()
         {
-            Console.WriteLine("Making the word frequency list");
-            var wordsArray = sb.ToString().
-                Split(' ', ',', '.', '-', '!', '?', ':', ';', '"', '[', ']', '(', ')', '\r', '\t', '\n');
+            Dictionary<string, int> words = null;
+            var assembly = Assembly.Load("AnalyzerLibrary");
+            var types = assembly.DefinedTypes;
+            var cl = types.FirstOrDefault(t => t.Name == "ListMaker");
+            var obj = Activator.CreateInstance(cl);
+            
+            var method = obj.GetType().GetMethod("MakingWordList", BindingFlags.NonPublic | BindingFlags.Instance);
+            object[] param = new object[1];
+            param[0] = (object)sb;
+            words = (Dictionary<string, int>)method.Invoke(obj, param);
 
-            Dictionary<string, int> dictionaryWords = new Dictionary<string, int>();
-
-            foreach (var item in wordsArray)
-            {
-                if (dictionaryWords.ContainsKey(item))
-                {
-                    dictionaryWords[item]++;
-                }
-                else
-                {
-                    dictionaryWords.Add(item, 1);
-                }
-
-            }
-
-
-            IOrderedEnumerable<KeyValuePair<string, int>> sortedWords = dictionaryWords.OrderByDescending(w => w.Value);
-
-
-            Console.WriteLine("Completed");
-            return sortedWords;
+            return words;
         }
-        
-        public void AmountListFileInput(IOrderedEnumerable<KeyValuePair<string, int>> words)
+
+
+
+
+    public void AmountListFileInput(Dictionary<string, int> words)
         {
             bool isWritten = true;
             try

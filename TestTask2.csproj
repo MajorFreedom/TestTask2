@@ -55,5 +55,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AnalyzerLibrary\AnalyzerLibrary.csproj">
+      <Project>{318ba7a9-e101-4a72-abe8-4fa454ffe6c0}</Project>
+      <Name>AnalyzerLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
